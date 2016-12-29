@@ -1,0 +1,209 @@
+"===================按键映射======================  
+  
+"按键映射的起始字符  
+let mapleader = '\'               
+  
+"使用Ctrl-l 和 Ctrl+h 切换标签页  
+nnoremap <C-l> gt              
+nnoremap <C-h> gT  
+  
+"在行末加上分号  
+"nnoremap <silent> <Leader>; :<Esc><End>a<Space>;<Esc><Down>  
+"保存  
+"nnoremap <C-s> :w<CR>  
+"替换  
+"nnoremap <C-h> :%s/<C-R>=expand("<cword>")<CR>/<C-R>=expand("<cword>")<CR>  
+"===================插件管理======================  
+  
+" 下载vundle  
+" git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim  
+  
+" 下载pathogen  
+" curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim  
+  
+set nocompatible              " be iMproved, required
+syntax enable
+syntax on
+filetype off                  " required
+" 将vundle加入到runtime path  
+set rtp+=~/.vim/bundle/Vundle.vim  
+  
+" 下载到bundle目录的插件  
+call vundle#begin()
+
+" plugin on GitHub repo
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'L9'
+Plugin 'git@github.com:vim-scripts/a.vim.git'
+Plugin 'git@github.com:vim-scripts/The-NERD-Commenter.git'
+Plugin 'git@github.com:vim-scripts/The-NERD-tree.git'
+Plugin 'Lokaltog/vim-powerline.git'
+Plugin 'wincent/command-t'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'tomtom/tlib_vim'
+Plugin 'tomtom/viki_vim'
+  
+" plugin from http://vim-scripts.org/vim/scripts.html  
+
+Plugin 'taglist.vim'  
+Plugin 'EasyGrep'  
+Plugin 'molokai'
+Plugin 'vimcdoc'
+  
+" Git plugin not hosted on GitHub  
+" Plugin 'git://...'  
+  
+" git repos on your local machine  
+" Plugin 'file://...'  
+  
+call vundle#end()  
+  
+filetype plugin indent on    " required  
+  
+"===================插件配置======================  
+  
+"-----pathogen-----  
+" execute pathogen#infect()   
+  
+"-----NERDTree-----  
+let g:NERDTreeCaseSensitiveSort = 1  
+let g:NERDTreeWinSize = 20  
+let g:NERDTreeWinPos = "left"  
+let g:NERDTreeShowBookmarks=1
+" Automatically open a NERDTree if no files where specified
+autocmd vimenter * if !argc() | NERDTree | endif
+" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+nnoremap <silent> <Leader>t :NERDTreeToggle<CR>   
+nnoremap <silent> <Leader>o :NERDTreeFind<CR>  
+  
+"-----Powerline-----  
+set fillchars+=stl:\ ,stlnc:\  
+let g:Powerline_symbols = 'compatible'  
+let g:Powerline_stl_path_style = 'filename'  "只显示文件名  
+  
+"-----Command-T-----  
+let g:CommandTFileScanner = 'ruby'   "使用ruby作为文件浏览器  
+let g:CommandTTraverseSCM = 'dir'    "根目录为执行vim时所在的目录    
+"打开文件跳转  
+nnoremap <silent> <Leader>f :CommandT<CR>  
+  
+"-----taglist-----  
+let Tlist_WinWidth = 35
+"let Tlist_Show_One_File = 1           "只显示当前文件的taglist  
+let Tlist_File_Fold_Auto_Close = 1    "只显示当前文件tag，其它文件的tag都被折叠起来。
+let Tlist_Close_On_Select = 1         "选择了tag后自动关闭taglist窗口
+let Tlist_Exit_OnlyWindow = 1         "taglist是最后一个窗口时退出vim  
+let Tlist_Use_Right_Window = 1         "在右侧窗口显示taglist
+let Tlist_GainFocus_On_ToggleOpen = 1 "打开taglist时，光标停在taglist窗口  
+let Tlist_Auto_Update = 1             "自动更新  
+" 打开标签浏览器  
+nnoremap <silent><Leader>dt :Tlist<CR>  
+" 重新生成标签   
+nnoremap <silent><Leader>bt :!~/.vim/hitags.sh<CR>  
+" 高亮标签  
+nnoremap <silent><Leader>ht :so tags.vim<CR>  
+  
+"-----cscope-----  
+"加载cscope库  
+if filereadable("cscope.out")  
+    cs add cscope.out  
+endif  
+set cscopequickfix=s-,c-,d-,i-,t-,e- "使用quickfix窗口显示结果  
+set cst                              "跳转时也使用cscope库  
+"打开引用窗口  
+nnoremap <silent><Leader>cw :cw<CR>  
+"重新生成索引文件  
+nnoremap <silent><Leader>bc :!cscope -Rbq<CR>  
+"s: 查找本C符号  
+"g: 查找本定义  
+"d: 查找本函数调用的函数  
+"c: 查找调用本函数的函数  
+"t: 查找本字符串  
+"e: 查找本egrep模式  
+"f: 查找本文件  
+"i: 查找包含本文件的文件  
+nnoremap <C-\>s :scs find s <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <C-\>g :scs find g <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <C-\>c :scs find c <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <C-\>t :scs find t <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <C-\>e :scs find e <C-R>=expand("<cword>")<CR><CR>  
+nnoremap <C-\>f :scs find f <C-R>=expand("<cfile>")<CR><CR>  
+nnoremap <C-\>i :scs find i <C-R>=expand("<cfile>")<CR><CR>  
+nnoremap <C-\>d :scs find d <C-R>=expand("<cword>")<CR><CR>  
+  
+"-----YouCompleteMe-----  
+let g:ycm_server_python_interpreter= '/usr/bin/python2'  
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py' "默认配置文件  
+let g:ycm_key_invoke_completion = '<C-Tab>'         "跨文件补全  
+let g:ycm_confirm_extra_conf = 0                    "关闭加载配置文件提示  
+let g:ycm_cache_omnifunc = 0                        "关闭补全缓存  
+let g:ycm_enable_diagnostic_signs = 0               "关闭诊断提示符  
+let g:ycm_enable_diagnostic_highlighting = 1        "关闭诊断高亮  
+"let g:ycm_show_diagnostics_ui = 0                   "关闭诊断ui  
+let g:ycm_min_num_of_chars_for_completion = 3       "n字符开始自动补全  
+"获取变量类型  
+nnoremap <silent><Leader>yt :YcmCompleter GetType<CR>  
+"跳转定义或声明  
+nnoremap <silent><Leader>yg :YcmCompleter GoTo<CR>  
+"跳转包含文件  
+nnoremap <silent><Leader>yi :YcmCompleter GoToInclude<CR>  
+"打开诊断信息  
+nnoremap <silent><Leader>yd :YcmDiags<CR>  
+  
+"-----EasyGrep-----  
+let EasyGrepMode = 2        "根据文件类型搜索相应文件  
+let EasyGrepRecursive = 1   "递归搜索  
+let EasyGrepCommand = 1     "使用grep  
+let EasyGrepJumpToMatch = 0 "不要跳转  
+
+"===================通用配置======================  
+  
+"文件搜索路径  
+set path=.,/usr/include,,  
+  
+" 控制  
+"set nocompatible              "关闭vi兼容  
+"filetype off                  "关闭文件类型侦测,vundle需要  
+"syntax on                     "语法高亮  
+"set fileencodings=utf-8,gbk   "使用utf-8或gbk编码方式  
+set fileencodings=utf-8,gb18030,gbk,big5,usc-bom,euc-jp,gb2312,cp936
+set backspace=2               "退格键正常模式  
+set whichwrap=<,>,[,]         "当光标到行首或行尾，允许左右方向键换行  
+set autoread                  "文件在vim外修改过，自动重载        
+"set nobackup                  "不使用备份  
+set confirm                   "在处理未保存或只读文件时，弹出确认消息     
+set scrolloff=3               "光标移动到距离顶部或底部开始滚到距离  
+set history=1000              "历史记录数  
+set mouse=                    "关闭鼠标  
+set selection=inclusive       "选择包含最后一个字符  
+set selectmode=mouse,key      "启动选择模式的方式  
+set completeopt=longest,menu  "智能补全,弹出菜单，无歧义时才自动填充  
+"set noswapfile                "关闭交换文件  
+"set hidden                    "允许在有未保存的修改时切换缓冲区  
+  
+"显示  
+colorscheme desert"molokai           "选择配色方案  
+"highlight NonText guibg=#060606
+"highlight Folded  guibg=#0A0A0A guifg=#9090D0
+set t_Co=256                  "可以使用的颜色数目  
+set number                    "显示行号  
+set laststatus=2              "显示状态行  
+set ruler                     "显示标尺  
+set showcmd                   "显示输入的命令  
+set showmatch                 "高亮括号匹配  
+set matchtime=1               "匹配括号高亮的时间(十分之一秒)  
+set matchpairs={:},(:)        "匹配括号"{}""()"   
+set hlsearch                  "检索时高亮匹配项  
+set incsearch                 "边检索边显示匹配  
+"set go-=T                     "去除gvim的toolbar  
+  
+"格式  
+set noexpandtab               "不要将tab转换为空格  
+set shiftwidth=4              "自动缩进的距离,也是平移字符的距离  
+set tabstop=4                 "tab键对应的空格数  
+set autoindent                "自动缩进  
+set smartindent               "智能缩进
+set fdm=marker                "设置代码折叠
+
